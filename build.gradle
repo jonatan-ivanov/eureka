@@ -1,0 +1,72 @@
+buildscript {
+    ext {
+        springBootVersion = '1.4.3.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath 'com.bmuschko:gradle-docker-plugin:3.+'
+    }
+}
+plugins {
+    id 'com.gorylenko.gradle-git-properties' version '1.4.17'
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.bmuschko.docker-java-application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+mainClassName = 'eureka.Eureka'
+
+springBoot  {
+    buildInfo()
+}
+
+repositories {
+    mavenCentral()
+}
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Camden.RELEASE'
+    }
+}
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.cloud:spring-cloud-starter-eureka-server'
+    compile 'org.jolokia:jolokia-core'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+docker {
+    javaApplication {
+        baseImage = 'openjdk:8'
+        tag = "$project.dockerNamespace/$project.applicationName:$project.version"
+        maintainer = project.maintainer
+        ports = [8761]
+    }
+    registryCredentials {
+        username = dockerRegistryUserName
+        password = dockerRegistryPassword
+    }
+}
+
+task cleanAll {
+    dependsOn clean, cleanIdea, cleanIdeaWorkspace
+    doLast {
+        delete 'out', 'logs'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}
