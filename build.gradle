@@ -44,6 +44,8 @@ dependencies {
     compile 'org.springframework.cloud:spring-cloud-starter-eureka-server'
     compile 'org.jolokia:jolokia-core'
 
+    compileOnly 'org.projectlombok:lombok'
+
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -68,5 +70,5 @@ task cleanAll {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+    gradleVersion = '3.4'
 }

@@ -1,4 +1,4 @@
-package eureka;
+package eureka.config;
 
 import com.netflix.appinfo.AmazonInfo;
 import org.springframework.cloud.commons.util.InetUtils;
