@@ -18,6 +18,8 @@ public class EurekaConfig {
         EurekaInstanceConfigBean instanceConfigBean = new EurekaInstanceConfigBean(inetUtils);
         AmazonInfo info = AmazonInfo.Builder.newBuilder().autoBuild("eureka");
         instanceConfigBean.setDataCenterInfo(info);
+        instanceConfigBean.setHostname(info.get(AmazonInfo.MetaDataKey.publicHostname));
+        instanceConfigBean.setIpAddress(info.get(AmazonInfo.MetaDataKey.publicIpv4));
 
         return instanceConfigBean;
     }
