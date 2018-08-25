@@ -22,8 +22,8 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.bmuschko.docker-java-application'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 10
+targetCompatibility = 10
 
 mainClassName = 'eureka.Eureka'
 
@@ -40,6 +40,11 @@ dependencyManagement {
     }
 }
 dependencies {
+    compile 'javax.xml.bind:jaxb-api:+'
+    compile 'com.sun.xml.bind:jaxb-core:+'
+    compile 'com.sun.xml.bind:jaxb-impl:+'
+    compile 'javax.activation:activation:+'
+
     compile 'org.springframework.boot:spring-boot-starter-actuator'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
@@ -48,11 +53,17 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.+'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
+
+    // TODO: remove this hack, the docker plugin uses javax.activation which was removed from Java 9
+    dockerJava 'javax.activation:activation:+'
+    dockerJava 'cglib:cglib:+'
+    dockerJava 'com.github.docker-java:docker-java:3.+'
+    dockerJava 'org.slf4j:slf4j-simple:1.+'
 }
 
 docker {
     javaApplication {
-        baseImage = 'openjdk:8'
+        baseImage = 'openjdk:10'
         tag = "$project.dockerNamespace/$project.applicationName:$project.version"
         maintainer = project.maintainer
         ports = [8761]
